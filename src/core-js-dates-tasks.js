@@ -152,8 +152,21 @@ function isDateInPeriod(date, period) {
  * '1999-01-05T02:20:00.000Z' => '1/5/1999, 2:20:00 AM'
  * '2010-12-15T22:59:00.000Z' => '12/15/2010, 10:59:00 PM'
  */
-function formatDate(/* date */) {
-  throw new Error('Not implemented');
+function formatDate(date) {
+  const curentDate = new Date(date);
+  const month = curentDate.getUTCMonth() + 1;
+  const day = curentDate.getUTCDate();
+  const year = curentDate.getFullYear();
+  let hours = curentDate.getUTCHours();
+  const amPm = hours >= 12 ? 'PM' : 'AM';
+
+  if (hours > 12) {
+    hours -= 12;
+  }
+
+  const minutes = String(curentDate.getMinutes()).padStart(2, '0');
+  const seconds = String(curentDate.getSeconds()).padStart(2, '0');
+  return `${month}/${day}/${year}, ${hours}:${minutes}:${seconds} ${amPm}`;
 }
 
 /**
@@ -168,8 +181,21 @@ function formatDate(/* date */) {
  * 12, 2023 => 10
  * 1, 2024 => 8
  */
-function getCountWeekendsInMonth(/* month, year */) {
-  throw new Error('Not implemented');
+function getCountWeekendsInMonth(month, year) {
+  let weekDays = 0;
+  const curentDate = new Date(year, month - 1);
+  let currentMonth = curentDate.getMonth() + 1;
+
+  while (currentMonth === month) {
+    const dayOfWeek = curentDate.getDay();
+
+    if (dayOfWeek === 0 || dayOfWeek === 6) {
+      weekDays += 1;
+    }
+    curentDate.setDate(curentDate.getDate() + 1);
+    currentMonth = curentDate.getMonth() + 1;
+  }
+  return weekDays;
 }
 
 /**
