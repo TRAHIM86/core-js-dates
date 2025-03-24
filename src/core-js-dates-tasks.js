@@ -291,8 +291,34 @@ function getQuarter(date) {
  * { start: '01-01-2024', end: '15-01-2024' }, 1, 3 => ['01-01-2024', '05-01-2024', '09-01-2024', '13-01-2024']
  * { start: '01-01-2024', end: '10-01-2024' }, 1, 1 => ['01-01-2024', '03-01-2024', '05-01-2024', '07-01-2024', '09-01-2024']
  */
-function getWorkSchedule(/* period, countWorkDays, countOffDays */) {
-  throw new Error('Not implemented');
+function getWorkSchedule(period, countWorkDays, countOffDays) {
+  const parseDate = (strOfDate) => {
+    const [day, month, year] = strOfDate.split('-');
+    return new Date(year, month - 1, day);
+  };
+
+  const startStamp = parseDate(period.start).getTime();
+  const endStamp = parseDate(period.end).getTime();
+  let curentStamp = startStamp;
+  const dayStamp = 1000 * 60 * 60 * 24;
+  const days = [];
+
+  while (curentStamp <= endStamp) {
+    for (let i = 1; i <= countWorkDays; i += 1) {
+      if (curentStamp > endStamp) break;
+
+      const d = new Date(curentStamp);
+
+      const day = d.getDate().toString().padStart(2, '0');
+      const month = (d.getMonth() + 1).toString().padStart(2, '0');
+      const year = d.getFullYear().toString().padStart(2, '0');
+      days.push(`${day}-${month}-${year}`);
+      curentStamp += dayStamp;
+    }
+
+    curentStamp += dayStamp * countOffDays;
+  }
+  return days;
 }
 
 /**
@@ -307,8 +333,9 @@ function getWorkSchedule(/* period, countWorkDays, countOffDays */) {
  * Date(2022, 2, 1) => false
  * Date(2020, 2, 1) => true
  */
-function isLeapYear(/* date */) {
-  throw new Error('Not implemented');
+function isLeapYear(date) {
+  const year = date.getFullYear();
+  return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
 }
 
 module.exports = {
